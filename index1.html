@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git, Git, Hack</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #000033, #87CEEB);
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            color: #fff;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        nav ul li {
+            margin: 0 10px;
+            position: relative;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            position: relative;
+            display: inline-block;
+        }
+
+        nav ul li a:hover::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -2px;
+            width: 100%;
+            height: 2px;
+            background-color: #fff;
+            animation: underline 0.3s ease-out forwards;
+        }
+
+        @keyframes underline {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        .login-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .login-button {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+
+        .login-container:hover .dropdown-content,
+        .dropdown-content:hover {
+            display: block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 40px;
+            right: 0;
+            background-color: #333;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 5px;
+        }
+
+        .dropdown-content a {
+            color: white;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #555;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        section {
+            margin: 20px 0;
+        }
+
+        h1, h2, h3 {
+            color: #333;
+        }
+
+        .info-section {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+
+        .info-section:hover {
+            cursor: arrow;
+        }
+
+        .info-section h3 {
+            margin-top: 0;
+        }
+
+        /* Popup Styles */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+        }
+
+        .popup-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            width: 300px;
+            text-align: center;
+            position: relative;
+        }
+
+        .popup-content input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .popup-content button {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .popup-content button:hover {
+            background-color: #555;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .social-buttons {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+        }
+
+        .social-buttons button {
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .social-buttons img {
+            width: 30px;
+        }
+
+        /* Loading Screen Styles */
+        .loading-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            justify-content: center;
+            align-items: center;
+            z-index: 3;
+            color: #fff;
+            text-align: center;
+        }
+
+        .loading-circle {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 8px solid transparent;
+            border-top: 8px solid #1e90ff;
+            border-right: 8px solid #00bfff;
+            border-bottom: 8px solid #87cefa;
+            border-left: 8px solid #00ced1;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-percentage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Git, Git, Hack</div>
+        <nav>
+            <ul>
+                <li><a href="#about">About this Platform</a></li>
+                <li><a href="#trials">Trials</a></li>
+            </ul>
+        </nav>
+        <div class="login-container">
+            <button class="login-button" onclick="openLoginPopup()">Log in</button>
+            <div class="dropdown-content">
+                <a href="#" onclick="openLoginPopup()">Log in</a>
+                <a href="#" onclick="openSignUpPopup()">Sign Up</a>
+            </div>
+        </div>
+    </header>
+    <main>
+        <section id="about" class="info-section">
+            <h3>About this Platform</h3>
+            <p>This platform allows you to git git hack, a method to disable any unwanted extensions like "Hapara Highlights Extension" and to disable any firewall on people's accounts. Learn more about our platform below.</p>
+            <p>Git, Git, Hack is designed to be user-friendly and accessible to everyone. Whether you're a beginner or an advanced user, our platform provides the tools you need to manage your online experience. With a simple interface and powerful features, you can easily control and customize your browsing environment.</p>
+        </section>
+        <section id="trials" class="info-section">
+            <h3>Trials</h3>
+            <p>Explore our trial options to see how Git, Git, Hack can benefit you. Our platform is completely free to use, allowing you to harness your creativity without any financial burden. Whether you're trying to disable specific extensions or bypass firewalls, Git, Git, Hack provides the tools you need at no cost.</p>
+            <p>With our free trial, you can experience the full range of features that Git, Git, Hack has to offer. There's no limit to what you can achieve with our platform, and we're committed to helping you make the most of your online experience.</p>
+        </section>
+        <section class="info-section">
+            <h3>How Git, Git, Hack Works</h3>
+            <p>Git, Git, Hack utilizes advanced techniques to identify and disable unwanted extensions. Our software scans for common extensions and firewalls that may be causing issues and provides an easy way to disable them. Our platform is constantly updated to stay ahead of the latest security measures, ensuring that you have the tools you need to manage your online experience effectively.</p>
+            <p>Our user-friendly interface makes it easy to navigate and use the platform. With clear instructions and intuitive design, you can quickly learn how to use Git, Git, Hack to its full potential. Whether you're looking to disable a single extension or manage multiple firewalls, our platform provides the tools you need to succeed.</p>
+        </section>
+        <section class="info-section">
+            <h3>Security Features</h3>
+            <p>Our platform is designed with security in mind. We use state-of-the-art encryption and security protocols to ensure that your data is safe and secure while using Git, Git, Hack. Our team of security experts is constantly monitoring the platform to identify and address any potential vulnerabilities, ensuring that your information is always protected.</p>
+            <p>In addition to our robust security measures, we also provide users with the tools they need to manage their own security settings. With Git, Git, Hack, you can easily customize your security preferences to suit your needs, giving you complete control over your online experience.</p>
+        </section>
+        <section class="info-section">
+            <h3>User-Friendly Interface</h3>
+            <p>Git, Git, Hack features a user-friendly interface that makes it easy to navigate and use. Whether you are a beginner or an advanced user, our platform provides a seamless experience. With clear instructions and intuitive design, you can quickly learn how to use Git, Git, Hack to its full potential.</p>
+            <p>Our platform is designed to be accessible to everyone, regardless of their technical expertise. With a simple and intuitive interface, you can easily manage your browsing environment and customize your online experience to suit your needs.</p>
+        </section>
+        <section class="info-section">
+            <h3>Compatibility</h3>
+            <p>Our platform is compatible with a wide range of devices and operating systems. Whether you are using Windows, Mac, or Linux, Git, Git, Hack will work seamlessly on your device. Our platform is also compatible with most web browsers, ensuring that you can use Git, Git, Hack regardless of your preferred browsing environment.</p>
+            <p>In addition to our compatibility with major operating systems and browsers, we also provide support for a wide range of extensions and firewalls. Whether you're looking to disable a specific extension or manage multiple firewalls, our platform provides the tools you need to succeed.</p>
+        </section>
+        <section class="info-section">
+            <h3>Customer Support</h3>
+            <p>We offer 24/7 customer support to assist you with any issues or questions you may have. Our dedicated team is here to help you get the most out of Git, Git, Hack. Whether you need help with installation, troubleshooting, or anything else, we're here to provide the support you need.</p>
+            <p>In addition to our customer support team, we also provide a comprehensive knowledge base and community forums where you can find answers to common questions and connect with other users. With Git, Git, Hack, you're never alone in managing your online experience.</p>
+        </section>
+        <section class="info-section">
+            <h3>Regular Updates</h3>
+            <p>We regularly update our platform to ensure it remains effective and secure. Our team of developers is constantly working to improve Git, Git, Hack and add new features. With our regular updates, you can be confident that you're always using the latest and most effective tools to manage your online experience.</p>
+            <p>In addition to our regular updates, we also provide users with the tools they need to customize their own experience. With Git, Git, Hack, you can easily configure your settings to suit your needs, ensuring that you have the tools you need to succeed.</p>
+        </section>
+        <section class="info-section">
+            <h3>Community Feedback</h3>
+            <p>We value feedback from our community and use it to improve our platform. Join our community forums to share your thoughts and suggestions with us. Our team is always looking for ways to improve Git, Git, Hack, and your feedback is an essential part of that process.</p>
+            <p>In addition to our community forums, we also provide users with the tools they need to connect with other users and share their experiences. With Git, Git, Hack, you can easily connect with other users and learn from their experiences, ensuring that you have the tools you need to succeed.</p>
+        </section>
+        <section class="info-section">
+            <h3>Getting Started</h3>
+            <p>Getting started with Git, Git, Hack is easy. Simply sign up for an account, download the software, and start using it to disable unwanted extensions and firewalls. Our user-friendly interface and comprehensive support make it easy to get started, regardless of your technical expertise.</p>
+            <p>With Git, Git, Hack, you can quickly and easily take control of your online experience. Whether you're looking to disable specific extensions or manage multiple firewalls, our platform provides the tools you need to succeed. Sign up today and start using Git, Git, Hack to enhance your online experience.</p>
+        </section>
+        <section class="info-section">
+            <h3>Advanced Features</h3>
+            <p>For advanced users, Git, Git, Hack offers a range of powerful features to manage your online experience. From advanced security settings to customizable options, our platform provides the tools you need to take control of your browsing environment.</p>
+            <p>With our advanced features, you can easily customize your settings to suit your needs. Whether you're looking to disable specific extensions or manage multiple firewalls, Git, Git, Hack provides the tools you need to succeed.</p>
+        </section>
+    </main>
+
+    <!-- Login Popup -->
+    <div id="loginPopup" class="popup">
+        <div class="popup-content">
+            <button class="close-btn" onclick="closePopup('loginPopup')">&times;</button>
+            <h3>Login</h3>
+            <input type="email" id="loginEmail" placeholder="Email" required>
+            <input type="password" id="loginPassword" placeholder="Password" required>
+            <button onclick="login()">Login</button>
+            <p><a href="#" onclick="openSignUpPopup()">Don't have an account? Sign up</a></p>
+            <div class="social-buttons">
+                <button><img src="apple-logo.png" alt="Apple"></button>
+                <button><img src="google-logo.png" alt="Google"></button>
+                <button><img src="microsoft-logo.png" alt="Microsoft"></button>
+                <button><img src="github-logo.png" alt="GitHub"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sign Up Popup -->
+    <div id="signUpPopup" class="popup">
+        <div class="popup-content">
+            <button class="close-btn" onclick="closePopup('signUpPopup')">&times;</button>
+            <h3>Sign Up</h3>
+            <input type="email" id="signUpEmail" placeholder="Email" required>
+            <input type="password" id="signUpPassword" placeholder="Password" required>
+            <button onclick="signUp()">Sign Up</button>
+            <p><a href="#" onclick="openLoginPopup()">Already have an account? Log in</a></p>
+            <div class="social-buttons">
+                <button><img src="apple-logo.png" alt="Apple"></button>
+                <button><img src="google-logo.png" alt="Google"></button>
+                <button><img src="microsoft-logo.png" alt="Microsoft"></button>
+                <button><img src="github-logo.png" alt="GitHub"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-circle">
+            <div class="loading-percentage" id="loadingPercentage">0%</div>
+        </div>
+    </div>
+
+    <script>
+        function openLoginPopup() {
+            document.getElementById('loginPopup').style.display = 'flex';
+        }
+
+        function openSignUpPopup() {
+            document.getElementById('signUpPopup').style.display = 'flex';
+        }
+
+        function closePopup(popupId) {
+            document.getElementById(popupId).style.display = 'none';
+        }
+
+        function showLoadingScreen() {
+            document.getElementById('loadingScreen').style.display = 'flex';
+            let percentage = 0;
+            const interval = setInterval(() => {
+                percentage += 1;
+                document.getElementById('loadingPercentage').textContent = percentage + '%';
+                if (percentage >= 100) {
+                    clearInterval(interval);
+                    document.getElementById('loadingScreen').style.display = 'none';
+                    window.location.href = 'https://technosmart567.github.io/Execute/';
+                }
+            }, 50); // Adjust the speed of the loading percentage here
+        }
+
+        function signUp() {
+            const email = document.getElementById('signUpEmail').value;
+            const password = document.getElementById('signUpPassword').value;
+            if (email && password) {
+                localStorage.setItem('email', email);
+                localStorage.setItem('password', password);
+                alert('Account created successfully!');
+                closePopup('signUpPopup');
+                showLoadingScreen();
+            }
+        }
+
+        function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const savedEmail = localStorage.getItem('email');
+            const savedPassword = localStorage.getItem('password');
+
+            if (email === savedEmail && password === savedPassword) {
+                alert('Login successful!');
+                closePopup('loginPopup');
+                showLoadingScreen();
+            } else {
+                alert('Invalid email or password.');
+            }
+        }
+    </script>
+</body>
+</html>
